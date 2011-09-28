@@ -10,11 +10,11 @@ data from:
 + pls.h5
 + trc.h5
 
-## Dependencies ##
+## Dependencies
 
 * h5r - [h5r](http://r-forge.r-project.org/projects/h5r/)
 
-## Installation ## 
+## Installation 
 
 + Download the repository
 + tar xzf $DOWNLOAD_NAME.tar.gz
