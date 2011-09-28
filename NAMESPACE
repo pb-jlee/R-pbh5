@@ -1,0 +1,15 @@
+useDynLib("pbh5")
+
+exportPattern("^[^\\.]")
+
+importClassesFrom(h5r,
+                  H5Obj, H5File, H5Group, H5Dataset, H5Attribute, H5DataContainer, H5Container)
+
+importFrom(utils, head)
+
+importMethodsFrom(h5r, nrow, ncol)
+
+exportMethods(getAlignments,
+              getQualityValue,
+              nrow,
+	      getClassifierQV)

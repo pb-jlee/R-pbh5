@@ -1,0 +1,14 @@
+
+The pbh5 R package currently is only supported on Unix and Mac OS
+X. This limitation is due to the h5r package which needs to be
+installed beforehand. That package can be found at:
+http://r-forge.r-project.org/projects/h5r/
+
+Installation can proceed from the command line via:
+
+R CMD INSTALL pbh5
+
+There is a small amount of native code currently in the library --
+this code is used in coverage calculations and can be removed if no C
+compiler is available. 
+
