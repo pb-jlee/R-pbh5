@@ -107,10 +107,6 @@ setGeneric("getQualityValue", function(h5Obj, ...) {
   standardGeneric("getQualityValue")
 })
 
-setGeneric("getClassifierQV", function(h5Obj, ...) {
-  standardGeneric("getClassifierQV")
-})
-
 setGeneric("getWidthInFrames", function(h5Obj, ...) {
   standardGeneric("getWidthInFrames")
 })
@@ -434,10 +430,6 @@ setMethod("getQualityValue", "PacBioCmpH5", function(h5Obj, idx) {
   .getDatasetByIdxFast(h5Obj, idx, "QualityValue")
 })
 
-setMethod("getClassifierQV", "PacBioCmpH5", function(h5Obj, idx) {
-  .getDatasetByIdxFast(h5Obj, idx, "ClassifierQV")
-})
-
 getEviconsCalls <- function(cmpH5, refSeq, collapse = FALSE) {
   refSeq <- getRefPath(cmpH5, refSeq)
   s <- paste(refSeq, "Consensus/ConsensusCalls", sep = "/")
@@ -466,6 +458,11 @@ getEviconsConfidence <- function(cmpH5, refSeq) {
 ## Base H5 Files
 ##
 ## #############################################################################
+.ofBasecalls <- c("Basecall", "DeletionQV", "DeletionTag",
+                  "InsertionQV", "PreBaseFrames", "PulseIndex",
+                  "QualityValue", "SubstitutionQV", "SubstitutionTag",
+                  "WidthInFrames")
+
 setMethod("getMovieName", "PacBioBasH5", function(h5Obj) {
   getH5Attribute(getH5Group(h5Obj, "ScanData/RunInfo"), "MovieName")[]
 })
@@ -495,6 +492,10 @@ PacBioBasH5 <- function(fileName) {
 ## Pulse H5 Files
 ##
 ## #############################################################################
+.ofPulses <- c("Channel", "Chi2", "ClassifierQV", "IsPulse", "MaxSignal",
+               "MeanSignal", "MidSignal", "MidStdDev",
+               "StartFrame", "WidthInFrames")
+
 PacBioPlsH5 <- function(fileName) {
   obj <- new("PacBioPlsH5", fileName = fileName)
   
@@ -558,7 +559,6 @@ getBaselineSigma <- function(plsH5) {
       convert(if (isV) d[i] else d[i,,drop=FALSE])
     }
   })
-
   if (is.null(holeNumbers))
     names(v) <- evt[rows, "holeNumber"]
   else
@@ -567,45 +567,69 @@ getBaselineSigma <- function(plsH5) {
   return(v)
 }
 
-.f <- function(a) {
-  c("A", "C", "G", "T", "-",
-    "A", "C", "G", "T")[match(a, c(65, 67, 71, 84, 45, 97, 99, 103, 116))]
+.convertToLettersFromAscii <- function(a) {
+  m <- c(65, 67, 71, 84, 45, 97, 99, 103, 116)
+  b <- c("A", "C", "G", "T", "-", "A", "C", "G", "T")
+  b[match(a, m)]
 }
 
-getBasecalls         <- function(basH5, convert = .f, ...) .getFromPlsH5(basH5, "BaseCalls", "Basecall",
-                                 convert = convert, ...)
-getDeletionTag       <- function(basH5, convert = .f, ...) .getFromPlsH5(basH5, "BaseCalls", "DeletionTag",
-                                 convert = convert, ...)
-getDeletionQV        <- function(basH5, ...) .getFromPlsH5(basH5, "BaseCalls", "DeletionQV", ...)
-getInsertionQV       <- function(basH5, ...) .getFromPlsH5(basH5, "BaseCalls", "InsertionQV", ...)
-getPulseIndex        <- function(basH5, ...) .getFromPlsH5(basH5, "BaseCalls", "PulseIndex", ...)
-getPreBaseDeletionQV <- function(basH5, ...) .getFromPlsH5(basH5, "BaseCalls", "PreBaseDeletionQV", ...)
-getSubstitutionTag   <- function(basH5, ...) .getFromPlsH5(basH5, "BaseCalls", "SubstitutionTag", ...)
-getSubstitutionQV    <- function(basH5, ...) .getFromPlsH5(basH5, "BaseCalls", "SubstitutionQV", ...)
+getBasecalls <- function(basH5, holeNumbers = getHoleNumbers(basH5))
+  .getFromPlsH5(basH5, "BaseCalls", "Basecall", convert = .convertToLettersFromAscii,
+                holeNumbers = holeNumbers)
 
-setMethod("getQualityValue", "PacBioBasH5", function(h5Obj, ...) {
+getDeletionQV <- function(basH5, holeNumbers = getHoleNumbers(basH5))
+  .getFromPlsH5(basH5, "BaseCalls", "DeletionQV", holeNumbers = holeNumbers)
+
+getDeletionTag <- function(basH5, holeNumbers = getHoleNumbers(basH5))
+  .getFromPlsH5(basH5, "BaseCalls", "DeletionTag", convert = .convertToLettersFromAscii,
+                holeNumbers = holeNumbers)
+
+getInsertionQV <- function(basH5, holeNumbers = getHoleNumbers(basH5))
+  .getFromPlsH5(basH5, "BaseCalls", "InsertionQV", holeNumbers = holeNumbers)
+
+getPreBaseFrames <- function(basH5, holeNumbers = getHoleNumbers(basH5))
+  .getFromPlsH5(basH5, "BaseCalls", "PreBaseFrames", holeNumbers = holeNumbers)
+
+getPulseIndex <- function(basH5, holeNumbers = getHoleNumbers(basH5))
+  .getFromPlsH5(basH5, "BaseCalls", "PulseIndex", holeNumbers = holeNumbers)
+
+getSubstitutionQV <- function(basH5, holeNumbers = getHoleNumbers(basH5))
+  .getFromPlsH5(basH5, "BaseCalls", "SubstitutionQV", holeNumbers = holeNumbers)
+
+getSubstitutionTag <- function(basH5, holeNumbers = getHoleNumbers(basH5))
+  .getFromPlsH5(basH5, "BaseCalls", "SubstitutionTag", holeNumbers = holeNumbers)
+
+setMethod("getQualityValue", "PacBioPlsH5", function(h5Obj, ...) {
   .getFromPlsH5(h5Obj, "BaseCalls", "QualityValue", ...)
-})
-
-setMethod("getClassifierQV", "PacBioPlsH5", function(h5Obj, ...) {
-  .getFromPlsH5(h5Obj, "PulseCalls", "ClassifierQV", ...)
-})
-
-setMethod("getWidthInFrames", "PacBioPlsH5", function(h5Obj, ...) {
-  .getFromPlsH5(h5Obj, "PulseCalls", "WidthInFrames", ...)
 })
 
 setMethod("getWidthInFrames", "PacBioBasH5", function(h5Obj, ...) {
   .getFromPlsH5(h5Obj, "BaseCalls", "WidthInFrames", ...)
 })
 
-getChannel       <- function(plsH5, ...) .getFromPlsH5(plsH5, "PulseCalls", "Channel", ...)
-getChi2          <- function(plsH5, ...) .getFromPlsH5(plsH5, "PulseCalls", "Chi2", ...)
-getIsPulse       <- function(plsH5, ...) .getFromPlsH5(plsH5, "PulseCalls", "IsPulse",  ...)
-getMaxSignal     <- function(plsH5, ...) .getFromPlsH5(plsH5, "PulseCalls", "MaxSignal", ...)
-getMeanSignal    <- function(plsH5, ...) .getFromPlsH5(plsH5, "PulseCalls", "MeanSignal", ...)
-getMidSignal     <- function(plsH5, ...) .getFromPlsH5(plsH5, "PulseCalls", "MidSignal", ...)
-getStartFrame    <- function(plsH5, ...) .getFromPlsH5(plsH5, "PulseCalls", "StartFrame", ...)
+getChannel <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "Channel", holeNumbers = holeNumbers)
+getChi2 <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "Chi2", holeNumbers = holeNumbers)
+getClassifierQV <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "ClassifierQV", holeNumbers = holeNumbers)
+getIsPulse <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "IsPulse",  holeNumbers = holeNumbers)
+getMaxSignal <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "MaxSignal", holeNumbers = holeNumbers)
+getMeanSignal <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "MeanSignal", holeNumbers = holeNumbers)
+getMidSignal <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "MidSignal", holeNumbers = holeNumbers)
+getMidStdDevSignal <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "MidStdDevSignal", holeNumbers = holeNumbers)
+getStartFrame <- function(plsH5, holeNumbers = getHoleNumbers(plsH5))
+  .getFromPlsH5(plsH5, "PulseCalls", "StartFrame", holeNumbers = holeNumbers)
+
+setMethod("getWidthInFrames", "PacBioPlsH5", function(h5Obj, ...) {
+  .getFromPlsH5(h5Obj, "PulseCalls", "WidthInFrames", ...)
+})
+
 
 ## ############################################################################
 ##
@@ -615,7 +639,6 @@ getStartFrame    <- function(plsH5, ...) .getFromPlsH5(plsH5, "PulseCalls", "Sta
 PacBioAlnH5 <- function(fileName, whAlignment = c("Alignments", "CRFAlignments",
                                     "GlobalAlignments")) {
   obj <- new("PacBioAlnH5", fileName = fileName)
-
   whAlignment <- match.arg(whAlignment)
     
   ## initialize groups.
@@ -646,7 +669,7 @@ setMethod("nrow", "PacBioAlnH5", function(x) {
 })
 
 .getAlnH5String <- function(alnH5, zmws, wh = c("ReadString", "TemplateString"),
-                            convert = .f) {
+                            convert = .convertToLettersFromAscii) {
   wh   <- match.arg(wh)
   whS  <- paste(wh, "Index", sep = ".")
   cs   <- cbind(start  = cumsum(c(1, getZMWs(alnH5)[-nrow(alnH5), whS])),

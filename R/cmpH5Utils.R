@@ -83,8 +83,7 @@ getMachineName <- function(cmpH5, idx = seq.int(1, nrow(cmpH5))) {
 }
 
 getAdvanceTime <- function(cmpH5, idx = seq.int(1, nrow(cmpH5))) {
-  .Call("PBR_advance_time", getStartTime(cmpH5, idx), getAlignmentsRaw(cmpH5, idx),
-        PACKAGE = "pbh5")
+  .Call("PBR_advance_time", getStartTime(cmpH5, idx), getAlignmentsRaw(cmpH5, idx), PACKAGE = "pbh5")
 }
 
 getTemplateSpan <- function(cmpH5, idx = seq.int(1, nrow(cmpH5))) {
@@ -108,7 +107,6 @@ getLocalPolymerizationRate <- function(cmpH5, idx = seq.int(1, nrow(cmpH5)),
                                          cut(seq.int(1, nrow(aln)), 10)
                                        }) {
   ## XXX : add John Eid's pulse-width + IPD version.
-  
   alns <- getAlignments(cmpH5, idx = idx)
   stimes <- getStartTime(cmpH5, idx = idx)
   mapply(function(aln, stime) {
@@ -164,37 +162,10 @@ getChannelToBaseMap <- function(plsH5) {
   })
 }
 
-getFrameByBaselineSNR <- function(cmpH5, plsH5s, fx = function(x) median(x, na.rm = T)) {
-  doWithPlsAndCmp(cmpH5, plsH5s, fx = function(cmpH5, plsH5, idxs) {
-    bs <- getH5Dataset(plsH5, "PulseData/PulseCalls/ZMW/BaselineSigma")[]
-    mtch <- match(cmpH5$holeNumber[idxs], plsH5@pulseEvents[,"holeNumber"])
-    channels <- getChannelToBaseMap(plsH5)
-    mapply(function(pk, cb, m) {
-      channel <- match(cb[,1], channels)
-      fx(pk/bs[m, channel])
-    }, getPkmid(cmpH5, idxs), getAlignments(cmpH5, idxs), as.list(mtch),
-           SIMPLIFY = FALSE)
-  })
-}
-
-setMethod("getSNR", "PacBioBasH5", function(h5Obj) {
-  snr <- getH5Dataset(plsH5, "PulseData/BaseCalls/ZMWMetrics/Snr")[]
-  channels <- getChannelToBaseMap(plsH5)
-  colnames(snr) <- paste("SNR", channels, sep = "_")
-  snr
-})
-
-setMethod("getSNR", "PacBioPlsH5", function(h5Obj) {
-  snr <- getH5Dataset(plsH5, "PulseData/PulseCalls/ZMWMetrics/Snr")[]
-  channels <- getChannelToBaseMap(plsH5)
-  colnames(snr) <- paste("SNR", channels, sep = "_")
-  snr
-})
-
 setMethod("getSNR", "PacBioCmpH5", function(h5Obj, plsH5s) {
   doWithPlsAndCmp(h5Obj, plsH5s, fx = function(cmpH5, plsH5, idxs) {
-    snr <- getH5Dataset(plsH5, "PulseData/PulseCalls/ZMWMetrics/Snr")[]
-    snr[match(cmpH5$holeNumber[idxs], plsH5@pulseEvents[,"holeNumber"]),,drop = FALSE]
+    snr <- getSNR(plsH5)
+    snr[match(cmpH5$holeNumber[idxs], getHoleNumbers(plsH5)),,drop = FALSE]
   })
 })
 
@@ -217,7 +188,6 @@ setMethod("getSNR", "PacBioCmpH5", function(h5Obj, plsH5s) {
   return(regTable)
 }
 
-
 getMoleculeIndex <- function(cmpH5) {
   factor(interaction(cmpH5$movieName, cmpH5$holeNumber, drop = T))
 }
@@ -229,39 +199,6 @@ getUnrolledTemplateSpan <- function(cmpH5, idx = 1:nrow(cmpH5), unique = TRUE) {
   }
   return(x)
 }
-
-getUnrolledReadLength <- function (cmpH5, plsH5s, narrow = TRUE, unique = TRUE,
-                                   method = c("standard", "sum-of-aligned")) {
-  method <- match.arg(method)
-  
-  res <- doWithPlsAndCmp(cmpH5, plsH5s, fx = function(cmpH5, plsH5, idxs) {
-    regions <- getRegionsTable(plsH5)
-    if (narrow)
-      regions <- .narrowRegions(regions)
-    regions <- regions[regions$type == "Adapter", ]
-    
-    alignedHoles <- cmpH5$holeNumber[idxs]
-    ss <- split(1:nrow(regions), regions$holeNumber)[as.character(alignedHoles)]
-    aa <- split(idxs, alignedHoles)[as.character(alignedHoles)]
-    
-    do.call(c, mapply(function(cIdx, rIdx) {
-      if (method == "standard") {
-        (max(if (length(rIdx)) max(regions$end[rIdx]) else -Inf, max(cmpH5$rEnd[cIdx]))
-         - min(if (length(rIdx)) min(regions$start[rIdx]) else Inf, min(cmpH5$rStart[cIdx]))) + 1
-      } else {
-        sum(width(reduce(IRanges(start = c(regions$start[rIdx], cmpH5$rStart[cIdx]),
-                                 end   = c(regions$end[rIdx], cmpH5$rEnd[cIdx])))))
-      }
-    }, aa, ss, SIMPLIFY = FALSE))
-  })
-  
-  if (unique) {
-    res[!duplicated(paste(cmpH5$movieName, cmpH5$holeNumber, sep = "/"))]
-  } else {
-    res
-  }
-}
-
 
 #############################################################################
 ##

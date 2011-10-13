@@ -89,8 +89,8 @@ trueAndNA <- function(a, b) {
 }
 
 TH("CMP: Alignments And Features 1", {
-  alnsAndFeats <- getAlignmentsWithFeatures(cmpH5, features = c("AlnArray", "IPD", "PulseWidth",
-                                                     "QualityValue", "StartTime", "pkmid"))
+  alnsAndFeats <- getAlignmentsWithFeatures(cmpH5, features = c("AlnArray", "IPD",
+                                                     "PulseWidth", "QualityValue"))
   alns <- getAlignments(cmpH5)
   all(mapply(function(a,b) {
     all(a == b[, c("read", "reference")])
@@ -98,8 +98,7 @@ TH("CMP: Alignments And Features 1", {
 })
 
 TH("CMP: Alignments And Features 2", {
-  alnsAndFeats <- getAlignmentsWithFeatures(cmpH5, features = c("AlnArray", "IPD", "PulseWidth",
-                                                     "QualityValue", "StartTime", "pkmid"))
+  alnsAndFeats <- getAlignmentsWithFeatures(cmpH5, features = c("AlnArray", "IPD", "PulseWidth","QualityValue"))
   trueAndNA(getRangeInH5WithOffsets(cmpH5, 1, ds = "IPD"), alnsAndFeats[[1]][,"IPD"])
 })
 
@@ -128,12 +127,10 @@ TH("CMP: Test getReadsInRange", {
   }))
 })
 
-s <- sample(seq.int(1, nrow(cmpH5)), size = 100)
+s <- sample(seq.int(1, nrow(cmpH5)), size = nrow(cmpH5)/2)
 
 TH("CMP: Test ipd, pulsewidth",
    (all(sapply(getIPD(cmpH5, idx = s), length) ==  sapply(getPulseWidth(cmpH5, idx = s), length))))
-
-TH("CMP: Test getStartTime", length(getStartTime(cmpH5, s)) == length(s))
 
 TH("CMP: IPD correct lengths", all(sapply(getIPD(cmpH5), length) == cmpH5$offsetEnd - cmpH5$offsetBegin + 1))
 
@@ -151,7 +148,8 @@ TH("CMP: IPDs match", all(na.omit(d$elt.ipd == b$elt)))
 a <- makeContextDataTable(cmpH5, 1:10)
 TH("CMP: context data table match", all(na.omit(a$elt.ipd == b$elt)))
 
-n <- do.call(rbind, getTemplatePosition(cmpH5, 1:100, TRUE, TRUE))
+n <- do.call(rbind, getTemplatePosition(cmpH5, withAlignments = TRUE, asDataFrame = TRUE))
+n <- subset(n, strand == 0)
 TH("CMP: bases match in template position", all(sapply(split(n[,3], n[,1]), function(a) {
   all((sort(table(factor(a, c("A","C","G","T")))) >= 1) == c(F, F, F, T))
 })))
@@ -165,43 +163,23 @@ TH("CMP: alignment block match", ncol(blk) == 10)
 ##
 ## Pulse files
 ##
-## plsH5 <- PacBioPlsH5(system.file("h5_files", "lambda_example.pls.h5", package = "pbh5"))
+basFiles <- list.files(system.file("h5_files", package = "pbh5"), pattern = "bas\\.h5", full.names = TRUE)
+basH5s <- lapply(basFiles, PacBioBasH5)
+names(basH5s) <- sapply(basH5s, getMovieName)
+basH5 <- basH5s[[1]]
 
-## TH("PLS basecall lengths", all(sapply(getFromPlsH5(plsH5, "BaseCalls", "Basecall"), length) ==
-##                                getBaseEvents(plsH5)[,"numEvent"]))
+TH("PLS basecall lengths", {
+  all(sapply(getBasecalls(basH5), length) == getBaseEvents(basH5)[, "numEvent"])
+})
 
-## TH("PLS pulsecall lengths", all(sapply(getFromPlsH5(plsH5, "PulseCalls", "Channel"), length) ==
-##                                 getPulseEvents(plsH5)[,"numEvent"]))
+x <- doWithPlsAndCmp(cmpH5, basH5s, fx = function(cmpH5, basH5, idxs) {
+  mapply(function(bc, alns) {
+    list(bc, alns)
+  }, getBasecalls(basH5, holeNumbers = cmpH5$holeNumber[idxs]),
+         getAlignments(cmpH5, idxs), SIMPLIFY = FALSE)
+}, SIMPLIFY = FALSE)
 
 
-## TH("PLS test getBasecallsWithFeatures", {
-##   holeNumbers <- getBaseEvents(plsH5)[which(getBaseEvents(plsH5)[,"numEvent"] != 0), "holeNumber"]
-##   all(sapply(holeNumbers, function(i) {
-##     a <- getBasecallsWithFeatures(plsH5, holeNumber = i)[[1]]
-##     b <- getBasecall(plsH5, holeNumber = i)[[1]]
-##     all(a$basecall== b)
-##   }))
-## })
-
-##
-## These cannot be tested w/out matching cmpH5 and plsH5 files.
-##
-## TH("PLS and CMP association 1", {
-##   x <- associateCmpWithPls(cmpH5, list(plsH5), "QualityValue", idx = c(1:10, 13), collapse = FALSE)
-##   y <- getQualityValue(cmpH5, idx = c(1:10, 13))
-  
-##   all(mapply(function(x, y) {
-##     all(integer(x$QualityValue) == integer(y))
-##   }, x, y))
-## })
-
-## TH("PLS and CMP association 2", {
-##   x <- associateCmpWithPls(cmpH5, list(plsH5), features = c("MaxSignal"), idx = c(10, 1),
-##                            collapse = TRUE)
-##   y <- associateCmpWithPls(cmpH5, list(plsH5), features = c("MaxSignal"), idx = c(1, 10),
-##                            collapse = TRUE)
-##   all(rev(x$alnIdx) == y$alnIdx)
-## })
 
 ##
 ## Print and throw any exceptions.

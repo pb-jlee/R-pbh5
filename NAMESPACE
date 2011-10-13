@@ -11,5 +11,4 @@ importMethodsFrom(h5r, nrow, ncol)
 
 exportMethods(getAlignments,
               getQualityValue,
-              nrow,
-	      getClassifierQV)
+              nrow)
