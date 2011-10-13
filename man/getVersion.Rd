@@ -17,7 +17,4 @@
 \value{
   A character string or Null if no versioning information exists in the file.
 }
-
-\examples{
-}
-\keyword{programming}
+\keyword{datasets}

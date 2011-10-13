@@ -2,46 +2,68 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{PacBioCmpH5-class}
-\alias{getAlignments,PacBioCmpH5-method}
-\alias{getQualityValue,PacBioCmpH5-method}
-\alias{getClassifierQV,PacBioCmpH5-method}
+\alias{H5ObjOrNull-class}
+\alias{matrixOrNull-class}
+\alias{stringOrNull-class}
 \alias{head,PacBioCmpH5-method}
 \alias{nrow,PacBioCmpH5-method}
 \alias{show,PacBioCmpH5-method}
+\alias{summary,PacBioCmpH5-method}
+\alias{getMovieName,PacBioCmpH5-method}
+\alias{$,PacBioCmpH5-method}
+\alias{[,PacBioCmpH5,ANY,ANY,ANY-method}
 \alias{PacBioCmpH5}
+\alias{alnGroup}
+\alias{refGroup}
+\alias{refInfo}
+\alias{movieInfo}
+\alias{getSNR,PacBioCmpH5-method}
+\alias{getEviconsCalls}
+\alias{getEviconsConfidence}
 
 \title{Class "PacBioCmpH5"}
 \description{
-  The comp(are) h5 (cmp.h5) class represents alignments to reference
-  sequences. Additionally, pulse information as well as quality values
-  can be stored within this file. 
+  The PacBioCmpH5 (pronounced PacBio Comp H5) class represents
+  alignments to reference sequences. Additionally, pulse information as
+  well as quality values can be stored within this file.
 }
 \section{Objects from the Class}{
-  Objects can be created by calls of the form \code{PacBioCmpH5(fileName, ...)}.
+  Objects can be created by calls of the form \code{PacBioCmpH5(fileName)}.
 }
 \section{Slots}{
   \describe{
-    \item{\code{alignmentIndex}:}{Object of class \code{"data.frame"}
+    \item{\code{AlnIndex}:}{Object of class \code{"data.frame"}
       The alignment index represents each alignment with a single
-      row. The row gives information about the positioning and quality
-      of the alignment. Additionally, information about the origin of
-      the read is contained in the alignment index.
+      row. The row gives information about the position, quality, and
+      strand of the alignment. Additionally, information about how
+      to access read/ref bases is stored in the row. 
     }
-    \item{\code{readGroups}:}{Object of class \code{"character"}
-      representing the read groups in the file. A read group can be used
-      to partition the reads into different categories in a structured
-      fashion, e.g., machines or movies.
+    \item{\code{AlnGroup}:}{Object of class \code{"data.frame"}
+      representing the alignment groups in the file. An alignment group
+      can be used to partition the reads into different categories in a
+      structured fashion, e.g., machines or movies. Typically, this
+      represents reads coming from the same movie.
     }
-    \item{\code{refSeqs}:}{Object of class \code{"character"}
-      representing the reference sequences which have been aligned to in
-      the file. This object contains the normalized names of the
-      reference sequences -- to obtain the names of the reference
-      sequence one typically makes a call to \code{\link{getRefSeqNames}}
+    \item{\code{RefGroup}:}{Object of class \code{"data.frame"}
+      representing the reference sequences with alignments in the
+      file. This object contains information about which reads map to
+      which references as well as some information about the reference
+      sequence itself.
     }
+    \item{\code{MovieInfo}:}{Object of class \code{"data.frame"}
+      representing information about the movies used during the alignment.
+    }
+    \item{\code{RefInfo}:}{Object of class \code{"data.frame"}
+      representing information about the references used during the
+      alignment. This data.frame will contain all references which were
+      used in the alignment process, whereas the RefGroup contains only
+      those references which had one or more reads with an alignment.
+    }
+    \item{\code{isSorted}:}{Object of class logical}
     \item{\code{version}:}{Object of class \code{"stringOrNull"}}
-    \item{\code{contents}:}{Object of class \code{"list"}}
     \item{\code{fileName}:}{Object of class \code{"character"}}
-    \item{\code{ePtr}:}{Object of class \code{"externalptr"}}
+    \item{\code{ePtr}:}{Object of class \code{"externalptr"} points to
+      the H5File.}
   }
 }
 \section{Extends}{
@@ -52,8 +74,6 @@
 }
 \section{Methods}{
   \describe{
-    \item{getAlignments}{\code{signature(h5Obj = "PacBioCmpH5")}: ... }
-    \item{getQualityValue}{\code{signature(h5Obj = "PacBioCmpH5")}: ... }
     \item{head}{\code{signature(x = "PacBioCmpH5")}: ... }
     \item{nrow}{\code{signature(x = "PacBioCmpH5")}: ... }
     \item{show}{\code{signature(object = "PacBioCmpH5")}: ... }
@@ -114,8 +134,7 @@ mosaicplot(prop.table(table(read = a[,1], reference = a[,2])))
 
 ## Some of the most useful functionality is via the
 ## getAlignmentsWithFeatures function.
-aAndF <- getAlignmentsWithFeatures(cmpH5, features = c("IPD", "PulseWidth",
-                                   "pkmid"), idx = 1, collapse = TRUE)
+aAndF <- getAlignmentsWithFeatures(cmpH5, features = c("IPD"), idx = 1, collapse = TRUE)
 head(aAndF)
 boxplot(IPD ~ reference, data = aAndF, log = 'y', ylim = c(.05, 10))
 }

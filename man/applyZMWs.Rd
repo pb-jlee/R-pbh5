@@ -37,6 +37,4 @@
 \seealso{
   \code{\link{PacBioTrcH5-class}}
 }
-\examples{
-}
-\keyword{programming}
+\keyword{datasets}

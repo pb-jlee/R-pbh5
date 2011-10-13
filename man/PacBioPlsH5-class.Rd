@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{PacBioPlsH5-class}
+\alias{getSNR,PacBioPlsH5-method}
 \alias{getClassifierQV,PacBioPlsH5-method}
 \alias{getWidthInFrames,PacBioPlsH5-method}
 \alias{PacBioPlsH5}
@@ -23,7 +24,6 @@
     \item{\code{baseEvents}:}{Object of class \code{"matrixOrNull"}}
     \item{\code{baseCallsG}:}{Object of class \code{"H5ObjOrNull"}}
     \item{\code{version}:}{Object of class \code{"stringOrNull"}}
-    \item{\code{contents}:}{Object of class \code{"list"}}
     \item{\code{fileName}:}{Object of class \code{"character"}}
     \item{\code{ePtr}:}{Object of class \code{"externalptr"}}
   }

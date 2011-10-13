@@ -9,7 +9,7 @@
   The pbh5 package provides and interface to the various HDF5 files
   produced by Pacific Biosciences software. These files can be used to
   access unique features of PacBio data not readily available in
-  standard formats.
+  standard formats such as SAM/BAM and FASTA/FASTQ.
 
   The package is structured around a set of hdf5 file formats and the
   classes used to represent them. The hdf5 format is a robust
@@ -34,10 +34,7 @@
   herein. To the extent possible, objects are returned as simple R
   objects.
 
-  Finally, and most importantly, both the code and the documentation are
-  works-in-progress. To the extent that example files and code disagrees
-  with the specification, the specifications should be trusted and a bug
-  should be reported to <jbullard@pacificbiosciences.com>.
+  Bugs should be reported to: <jbullard@pacificbiosciences.com>.
 }
 \details{
   \tabular{ll}{

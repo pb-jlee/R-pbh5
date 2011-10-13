@@ -1,6 +1,5 @@
 \name{getHoleNumbers}
 \alias{getHoleNumbers}
-
 \title{
   Get ZMWs Stored in a bas.h5 File.
 }
@@ -17,7 +16,5 @@
 }
 \value{
   A vector of integers representing hole numbers.
-}
-\examples{
 }
 \keyword{programming}

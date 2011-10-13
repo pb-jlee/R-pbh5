@@ -18,6 +18,4 @@
 \value{
   A matrix with various ZMW information for the aln.h5 files.
 }
-\examples{
-}
-\keyword{programming}
+\keyword{datasets}

@@ -1,5 +1,7 @@
 \name{getQualityValue}
 \alias{getQualityValue}
+\alias{getQualityValue,PacBioCmpH5-method}
+\alias{getQualityValue,PacBioPlsH5-method}
 \title{
   Return Classifier Quality Values
 }
@@ -23,5 +25,13 @@
   A list of vectors of quality values.
 }
 \examples{
+  require(pbh5)
+  cmpH5 <- PacBioCmpH5(system.file("h5_files",  "aligned_reads.cmp.h5",
+  package = "pbh5"))
+  values <- getQualityValue(cmpH5)
+  class(values)
+  length(values)
+  length(values[[1]])
+  head(values[[1]])
 }
-\keyword{programming}
+\keyword{datasets}

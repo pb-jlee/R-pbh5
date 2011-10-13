@@ -4,7 +4,7 @@
 \title{Methods for Function getQualityValue}
 \description{
   Methods for function \code{getQualityValue}, Documentation for quality
-  values is stored within the class for which it is being retrieved.
+  values is stored within the class from which it is being retrieved.
 }
 \section{Methods}{
 \describe{

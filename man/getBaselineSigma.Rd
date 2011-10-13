@@ -24,7 +24,5 @@
 \seealso{
   \code{\link{PacBioPlsH5-class}}
 }
-\examples{
-}
-\keyword{programming}
+\keyword{datasets}
 

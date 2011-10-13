@@ -1,16 +1,10 @@
 \name{getIPD}
 \alias{getIPD}
-\alias{getLight}
-\alias{getPulseWidth}
-\alias{getStartTime}
-\alias{getPkmid}
-
 \title{
-  Get Pulse and Basecall Features from cmp.h5 Files
+  Compute the IPD
 }
 \description{
-  Retrieve datasets stored within cmp.h5 files. These datasets might not be available
-  in all cmp.h5 files. 
+  'getIPD' computes the inter-pulse distance for each base.
 }
 \usage{
   getIPD(cmpH5, idx)
@@ -24,18 +18,20 @@
   }
 }
 \details{
-  Pulse and basecall information are often stored in cmp.h5 files. This
-  information can be accessed using accessor functions. The meaning of
-  this information can be found in the XXX documentation.
+ Inter-pulse distances are given in seconds.
 }
 \value{
-  A list of vectors of the particular dataset which was retrieved. 
+  A list of vectors of inter-pulse distances. 
 }
 \seealso{
   \code{\link{PacBioCmpH5-class}}
 }
 \examples{
-   cmpH5 <- PacBioCmpH5(system.file("h5_files", "lambda_example_fromPls.cmp.h5", package = "pbh5"))
-   plot(density(getLight(cmpH5)[[1]], na.rm = TRUE))
+  require(pbh5)
+  cmpH5 <- PacBioCmpH5(system.file("h5_files",  "aligned_reads.cmp.h5",
+  package = "pbh5"))
+  ipd <- getIPD(cmpH5)
+  logIPD <- lapply(ipd, function(x) log(x))
+  plot(density(logIPD[[1]], na.rm = TRUE), main = "Distribution of IPDs from the first alignment")
 }
-\keyword{programming}
+\keyword{datasets}

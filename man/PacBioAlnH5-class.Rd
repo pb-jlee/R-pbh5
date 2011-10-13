@@ -17,18 +17,14 @@
 }
 \section{Slots}{
   \describe{
-    \item{\code{ZMWS}:}{Object of class \code{"matrix"} describing how
+    \item{\code{ZMWs}:}{Object of class \code{"matrix"} describing how
       the file can be indexed.}
     \item{\code{alignment}:}{Object of class \code{"H5Obj"} pointing to
       alignment group in hdf5 file.}
-    \item{\code{version}:}{Object of class \code{"stringOrNull"} giving
-      version information if it exists.}
-    \item{\code{contents}:}{Object of class \code{"list"} listing file
-      contents. }
-    \item{\code{fileName}:}{Object of class \code{"character"} which was
-    used to instantiate this object.}
-    \item{\code{ePtr}:}{Object of class \code{"externalptr"} pointing to
-    the internal C datastructure.}
+    \item{\code{version}:}{Object of class \code{"stringOrNull"}}
+    \item{\code{fileName}:}{Object of class \code{"character"}}
+    \item{\code{ePtr}:}{Object of class \code{"externalptr"} points to
+      the H5File.}
   }
 }
 \section{Extends}{

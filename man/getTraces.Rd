@@ -14,11 +14,7 @@
     An object of class \code{PacBioTrcH5}
   }
 }
-
 \value{
   An object of class \code{H5Dataset}
 }
-
-\examples{
-}
-\keyword{programming}
+\keyword{datasets}

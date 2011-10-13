@@ -1,7 +1,5 @@
 \name{getCoverageInRange}
 \alias{getCoverageInRange}
-\alias{getReadsInRange}
-
 \title{
   Get Coverage in Range
 }
@@ -10,7 +8,7 @@
   overalapping that range. 
 }
 \usage{
-getCoverageInRange(cmpH5, refSeq, start, end, idx = NULL)
+ getCoverageInRange(cmpH5, refSeq, refStart, refEnd, idx = NULL)
 }
 \arguments{
   \item{cmpH5}{
@@ -19,10 +17,10 @@ getCoverageInRange(cmpH5, refSeq, start, end, idx = NULL)
   \item{refSeq}{
     Which reference sequence to use.
 }
-  \item{start}{
+  \item{refStart}{
     The start of the range (1-based inclusive).
   }
-  \item{end}{
+  \item{refEnd}{
     The end of the range (1-based inclusive).
   }
   \item{idx}{
@@ -34,5 +32,10 @@ getCoverageInRange(cmpH5, refSeq, start, end, idx = NULL)
   A vector of length end - start + 1
 }
 \examples{
+  require(pbh5)  
+  cmpH5 <- PacBioCmpH5(system.file("h5_files",  "aligned_reads.cmp.h5",
+  package = "pbh5"))
+  coverage <- getCoverageInRange(cmpH5, 1, 1000, 2000)
+  boxplot(coverage, ylab = "Pileup Coverage") 
 }
-\keyword{programming}
+\keyword{datasets}

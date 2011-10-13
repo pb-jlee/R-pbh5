@@ -3,6 +3,7 @@
 \docType{class}
 \alias{PacBioTrcH5-class}
 \alias{PacBioTrcH5}
+\alias{makePlsAndTrcProcessor}
 
 \title{Class "PacBioTrcH5"}
 \description{
@@ -15,7 +16,6 @@
 \section{Slots}{
   \describe{
     \item{\code{version}:}{Object of class \code{"stringOrNull"} ~~ }
-    \item{\code{contents}:}{Object of class \code{"list"} ~~ }
     \item{\code{fileName}:}{Object of class \code{"character"} ~~ }
     \item{\code{ePtr}:}{Object of class \code{"externalptr"} ~~ }
   }

@@ -28,9 +28,15 @@ getAlignmentsWithFeatures(cmpH5, features, idx = seq.int(1, nrow(cmpH5)), collap
   Either a list of data.frames or a data.frame
 }
 \examples{
-cmpH5 <- PacBioCmpH5(system.file("h5_files", "lambda_example_fromPls.cmp.h5", package = "pbh5"))
-aAndF <- getAlignmentsWithFeatures(cmpH5, features = c("IPD","PulseWidth", "pkmid"), idx = 1, collapse = TRUE)
-head(aAndF)
-boxplot(IPD ~ reference, data = aAndF, log = 'y', ylim = c(.05, 10))
+  require(pbh5)
+  cmpH5 <- PacBioCmpH5(system.file("h5_files",  "aligned_reads.cmp.h5",
+  package = "pbh5"))
+  alnsPlusFeatures <- getAlignmentsWithFeatures(cmpH5,
+        features = c("IPD","PulseWidth", "pkmid"), idx = 1, collapse = TRUE)
+  head(alnsPlusFeatures)
+  boxplot(IPD ~ reference, data = alnsPlusFeatures, log = 'y',
+           ylim = c(.05, 10), main = "Distribution of IPDs Conditioned on Base")
+  plot(density(log(alnsPlusFeatures$PulseWidth), na.rm = TRUE), main =
+ "Distribution of Global Pulsewidth")
 }
-\keyword{programming}
+\keyword{datasets}

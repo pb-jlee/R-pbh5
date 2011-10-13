@@ -15,7 +15,6 @@
 \section{Slots}{
   \describe{
     \item{\code{version}:}{Object of class \code{"stringOrNull"} ~~ }
-    \item{\code{contents}:}{Object of class \code{"list"} ~~ }
     \item{\code{fileName}:}{Object of class \code{"character"} ~~ }
     \item{\code{ePtr}:}{Object of class \code{"externalptr"} ~~ }
   }

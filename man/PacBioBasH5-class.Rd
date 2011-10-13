@@ -5,7 +5,15 @@
 \alias{initialize,PacBioBasH5-method}
 \alias{getQualityValue,PacBioBasH5-method}
 \alias{getWidthInFrames,PacBioBasH5-method}
+\alias{getSNR,PacBioBasH5-method}
+\alias{getMovieName,PacBioBasH5-method}
+\alias{getNumEvent,PacBioBasH5-method}
+\alias{getNumEvent,PacBioPlsH5-method}
+\alias{getSNR,PacBioBasH5-method}
+\alias{getSNR}
+\alias{getNumEvent}
 \alias{PacBioBasH5}
+\alias{getReadScore}
 
 \title{Class "PacBioBasH5"}
 \description{
@@ -23,7 +31,6 @@
     \item{\code{baseEvents}:}{Object of class \code{"matrixOrNull"}}
     \item{\code{baseCallsG}:}{Object of class \code{"H5ObjOrNull"}}
     \item{\code{version}:}{Object of class \code{"stringOrNull"}}
-    \item{\code{contents}:}{Object of class \code{"list"}}
     \item{\code{fileName}:}{Object of class \code{"character"}}
     \item{\code{ePtr}:}{Object of class \code{"externalptr"}}
   }

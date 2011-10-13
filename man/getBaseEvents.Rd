@@ -1,7 +1,6 @@
 \name{getBaseEvents}
 \alias{getBaseEvents}
 \alias{getPulseEvents}
-
 \title{
   Get Base or Pulse Events
 }
@@ -22,6 +21,4 @@
 \value{
   A matrix of base events.
 }
-\examples{
-}
-\keyword{programming}
+\keyword{datasets}

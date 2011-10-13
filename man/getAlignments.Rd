@@ -1,5 +1,7 @@
 \name{getAlignments}
 \alias{getAlignments}
+\alias{templatePositionFromAln}
+\alias{getAlignments,PacBioCmpH5-method}
 \title{
   Return Alignments
 }
@@ -25,5 +27,11 @@
   A list of alignment matrices.
 }
 \examples{
+  require(pbh5)
+  cmpH5 <- PacBioCmpH5(system.file("h5_files",  "aligned_reads.cmp.h5",
+  package = "pbh5"))
+  nucleotideSeq <- getAlignments(cmpH5)
+  class(nucleotideSeq)
+  head(nucleotideSeq[[1]])
 }
-\keyword{programming}
+\keyword{datasets}
